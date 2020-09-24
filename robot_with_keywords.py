@@ -7,7 +7,17 @@
 # What about organization and readability?  Should they all be in one place?
 # Even if you didn't apply Builder, are there ways to improve this
 #   keyword implementation?
+from abc import ABC, abstractmethod
+
 class Robot:
+  def __init__(self):
+        self.bipedal = False
+        self.quadripedal = False
+        self.wheeled = False
+        self.flying = False
+        self.traversal = []
+        self.detection_systems = []
+  """"      
   def __init__(self, bipedal = None, quadripedal = None, wheeled = None,
              flying = None, traversal = [], detection_systems = []):
     self.bipedal = bipedal
@@ -16,7 +26,7 @@ class Robot:
     self.flying = flying
     self.traversal = traversal
     self.detection_systems = detection_systems
-
+ """
   # This is still awful!  What should we do about it??
   def __str__(self):
     string = ""
@@ -88,21 +98,112 @@ class InfraredDetectionSystem:
     return "infrared"
 
 
+class RobotBuilder(ABC):
+    @abstractmethod
+    def reset(self):
+        pass
+
+    @abstractmethod
+    def build_traversal(self):
+        pass
+
+    @abstractmethod
+    def build_detection_system(self):
+        pass
+
+  
+
+
+class AndroidBuilder(RobotBuilder):
+  
+    def __init__(self):
+      self.product = Robot()
+  
+    def reset(self):
+      self.product = Robot()
+
+# All of the concrete builders have this in common
+# Should it be elevated to the superclass?
+    def get_product(self):
+      return self.product
+
+    def build_traversal(self):
+      self.product.bipedal = True
+      self.product.traversal.append(BipedalLegs())
+      self.product.traversal.append(Arms())
+
+    def build_detection_system(self):
+      self.product.detection_systems.append(CameraDetectionSystem())     
+
+class AutonomousCarBuilder(RobotBuilder):
+    def __init__(self):
+        self.product = Robot()
+
+    def reset(self):
+        self.product = Robot()
+
+    # All of the concrete builders have this in common
+    # Should it be elevated to the superclass?
+    def get_product(self):
+        return self.product
+
+    def build_traversal(self):
+        self.product.wheeled = True
+        self.product.traversal.append(FourWheels())
+
+    def build_detection_system(self):
+        self.product.detection_systems.append(InfraredDetectionSystem())
+
+class FlyingMonkeyRobotBuilder(RobotBuilder):
+    def __init__(self):
+       self.product = Robot()
+
+    def reset(self):
+       self.product = Robot()
+
+    # All of the concrete builders have this in common
+    # Should it be elevated to the superclass?
+    def get_product(self):
+        return self.product
+
+    def build_traversal(self):
+        self.product.flying = True
+        self.product.traversal.append(Wings())
+        self.product.traversal.append(Arms())
+
+    def build_detection_system(self):
+        self.product.detection_systems.append(InfraredDetectionSystem())
+        self.product.detection_systems.append(CameraDetectionSystem())
+
+class Director:
+    def make_android(self, builder):
+        builder.build_traversal()
+        builder.build_detection_system()
+        return builder.get_product()
+
+    def make_autonomous_car(self, builder):
+        builder.build_traversal()
+        builder.build_detection_system()
+        return builder.get_product()
+
+    def make_flying_monkey_robot(self, builder):
+        builder.build_traversal()
+        builder.build_detection_system()
+        return builder.get_product()
+
+director = Director()
+builder = AndroidBuilder()
+print(director.make_android(builder))
+
+
+#director = Director()
+builder = AutonomousCarBuilder()
+print(director.make_autonomous_car(builder))
+
+builder = FlyingMonkeyRobotBuilder()
+print(director.make_flying_monkey_robot(builder))
+
 # Constructing robots by providing only relevant attributes
 # Note that when providing attributes via keyword, order doesn't matter!
 # Is there a danger here??
-biped = BipedalLegs()
-android = Robot(detection_systems = [CameraDetectionSystem()],
-                bipedal = biped, traversal = [biped, Arms()] )
-print(android)
 
-wheels = FourWheels()
-auto_auto = Robot(detection_systems = [InfraredDetectionSystem()],
-                  wheeled = wheels, traversal = [wheels])
-print(auto_auto)
-
-flyer = Wings()
-flying_monkey_robot = Robot(
-  detection_systems = [CameraDetectionSystem(), InfraredDetectionSystem()],
-  flying = flyer, traversal = [flyer, Arms()])
-print(flying_monkey_robot)
