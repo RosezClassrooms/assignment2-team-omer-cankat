@@ -111,9 +111,12 @@ class RobotBuilder(ABC):
     def build_detection_system(self):
         pass
 
+    #elevated to the superclass
+    def get_product(self):
+        return self.product
+        pass
   
-
-
+  
 class AndroidBuilder(RobotBuilder):
   
     def __init__(self):
@@ -124,8 +127,7 @@ class AndroidBuilder(RobotBuilder):
 
 # All of the concrete builders have this in common
 # Should it be elevated to the superclass?
-    def get_product(self):
-      return self.product
+#Fixed elevated to the superclass RobotBuilder  
 
     def build_traversal(self):
       self.product.bipedal = True
@@ -144,8 +146,7 @@ class AutonomousCarBuilder(RobotBuilder):
 
     # All of the concrete builders have this in common
     # Should it be elevated to the superclass?
-    def get_product(self):
-        return self.product
+    # Fixed elevated to the superclass RobotBuilder 
 
     def build_traversal(self):
         self.product.wheeled = True
@@ -163,8 +164,7 @@ class FlyingMonkeyRobotBuilder(RobotBuilder):
 
     # All of the concrete builders have this in common
     # Should it be elevated to the superclass?
-    def get_product(self):
-        return self.product
+    # Fixed elevated to the superclass RobotBuilder
 
     def build_traversal(self):
         self.product.flying = True
@@ -195,8 +195,6 @@ director = Director()
 builder = AndroidBuilder()
 print(director.make_android(builder))
 
-
-#director = Director()
 builder = AutonomousCarBuilder()
 print(director.make_autonomous_car(builder))
 
