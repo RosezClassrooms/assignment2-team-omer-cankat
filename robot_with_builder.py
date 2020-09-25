@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod  # For Builder classes
-
+from enum import Enum
+Components =Enum('','two_legs four_legs two_arms wings blades four_wheels two_wheels cameras infrared')
 
 # Doesn't need an endless list of arguments when initialized
 class Robot:
@@ -16,82 +17,25 @@ class Robot:
     # Huge decision statement: why is this not good?
     # Can we improve this?
     def __str__(self):
-        string = ""
-        if self.bipedal:
-            string += "BIPEDAL "
-        if self.quadripedal:
-            string += "QUADRIPEDAL "
-        if self.flying:
-            string += "FLYING ROBOT "
-        if self.wheeled:
-            string += "ROBOT ON WHEELS\n"
-        else:
-            string += "ROBOT\n"
+      string = ""
+      string += 'BIPEDAL' if self.bipedal else '' 
+      string += 'QUADRIPEDAL' if self.quadripedal else '' 
+      string += 'FLYING' if self.flying else '' 
+      string += 'ROBOT ON WHEELS' if self.wheeled else '' 
 
-        if self.traversal:
-            string += "Traversal modules installed:\n"
+      traversal = 'Traversal modules installed:\n' if self.traversal else '' 
 
-        for module in self.traversal:
-            string += "- " + str(module) + "\n"
+      for module in self.traversal:
+        traversal += "- " + str(module) + "\n"
 
-        if self.detection_systems:
-            string += "Detection systems installed:\n"
+      detection = 'Detection systems installed:\n' if self.detection_systems else ''
 
-        for system in self.detection_systems:
-            string += "- " + str(system) + "\n"
+      for system in self.detection_systems:
+        detection += "- " + str(system) + "\n" 
 
-        return string
+      info = (f'{string} ROBOT\n',f'{traversal}',f'{detection}') 
+      return '\n'.join(info)
 
-
-#---------------------------------------------------------------------------
-
-
-# Concrete classes for componenets
-# In a real application, there would be an endless list of these, each one
-#   composing additional subcomponents
-class BipedalLegs:
-    def __str__(self):
-        return "two legs"
-
-
-class QuadripedalLegs:
-    def __str__(self):
-        return "four legs"
-
-
-class Arms:
-    def __str__(self):
-        return "two arms"
-
-
-class Wings:
-    def __str__(self):
-        return "wings"
-
-
-class Blades:
-    def __str__(self):
-        return "blades"
-
-
-class FourWheels:
-    def __str__(self):
-        return "four wheels"
-
-
-class TwoWheels:
-    def __str__(self):
-        return "two wheels"
-
-
-class CameraDetectionSystem:
-    def __str__(self):
-        return "cameras"
-
-
-class InfraredDetectionSystem:
-    def __str__(self):
-        return "infrared"
 
 
 #----------------------------------------------------------------------------
@@ -130,11 +74,12 @@ class AndroidBuilder(RobotBuilder):
 
     def build_traversal(self):
         self.product.bipedal = True
-        self.product.traversal.append(BipedalLegs())
-        self.product.traversal.append(Arms())
+        components = (Components.two_legs, Components.two_arms)
+        self.product.traversal.append([t for t in components])
+       
 
     def build_detection_system(self):
-        self.product.detection_systems.append(CameraDetectionSystem())
+        self.product.detection_systems.append(Components.cameras)
 
 
 # Concrete Builder class:  there would be many of these
@@ -152,10 +97,10 @@ class AutonomousCarBuilder(RobotBuilder):
 
     def build_traversal(self):
         self.product.wheeled = True
-        self.product.traversal.append(FourWheels())
+        self.product.traversal.append(Components.four_wheels)
 
     def build_detection_system(self):
-        self.product.detection_systems.append(InfraredDetectionSystem())
+        self.product.detection_systems.append(Components.infrared)
 
 
 #-------------------------------------------------------------------------

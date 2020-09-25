@@ -8,6 +8,8 @@
 # Even if you didn't apply Builder, are there ways to improve this
 #   keyword implementation?
 from abc import ABC, abstractmethod
+from enum import Enum
+Components =Enum('Components','two_legs four_legs two_arms wings blades four_wheels two_wheels cameras infrared')
 
 class Robot:
   def __init__(self):
@@ -17,6 +19,10 @@ class Robot:
         self.flying = False
         self.traversal = []
         self.detection_systems = []
+
+
+
+
   """"      
   def __init__(self, bipedal = None, quadripedal = None, wheeled = None,
              flying = None, traversal = [], detection_systems = []):
@@ -27,33 +33,26 @@ class Robot:
     self.traversal = traversal
     self.detection_systems = detection_systems
  """
-  # This is still awful!  What should we do about it??
-  def __str__(self):
-    string = ""
-    if self.bipedal:
-      string += "BIPEDAL "
-    if self.quadripedal:
-      string += "QUADRIPEDAL "
-    if self.flying:
-      string += "FLYING ROBOT "
-    if self.wheeled:
-      string += "ROBOT ON WHEELS\n"
-    else:
-      string += "ROBOT\n"
+  # __str__ is changed as below
+  def __str__(self):  
+    string = 'BIPEDAL' if self.bipedal else '' 
+    string = 'QUADRIPEDAL' if self.quadripedal else '' 
+    string = 'FLYING' if self.flying else '' 
+    string = 'ROBOT ON WHEELS' if self.wheeled else '' 
 
-    if self.traversal:
-      string += "Traversal modules installed:\n"
+    traversal = 'Traversal modules installed:\n' if self.traversal else '' 
 
     for module in self.traversal:
-      string += "- " + str(module) + "\n"
+      traversal += "- " + str(module) + "\n"
 
-    if self.detection_systems:
-      string += "Detection systems installed:\n"
+    detection = 'Detection systems installed:\n' if self.detection_systems else ''
 
     for system in self.detection_systems:
-      string += "- " + str(system) + "\n"
+      detection += "- " + str(system) + "\n" 
 
-    return string
+    info = (f'{string} ROBOT\n',f'{traversal}',f'{detection}') 
+    return '\n'.join(info)
+
 
 #---------------------------------------------------------------------------
 
