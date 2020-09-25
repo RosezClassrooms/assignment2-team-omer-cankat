@@ -6,13 +6,13 @@ Components =Enum('','two_legs four_legs two_arms wings blades four_wheels two_wh
 class Robot:
     # Uses a lot of flag logic here:  Is that necessary?
     # Does the use of this flag logic create other problems?
-    def __init__(self):
-        self.bipedal = False
-        self.quadripedal = False
-        self.wheeled = False
-        self.flying = False
-        self.traversal = []
-        self.detection_systems = []
+    def __init__(self,bipedal='',quadripedal='',wheeled='',flying='',traversal=[],detection_systems=[]):
+        self.bipedal = bipedal
+        self.quadripedal = quadripedal
+        self.wheeled = wheeled
+        self.flying = flying
+        self.traversal = traversal
+        self.detection_systems = detection_systems
 
     # Huge decision statement: why is this not good?
     # Can we improve this?
