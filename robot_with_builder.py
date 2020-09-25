@@ -57,6 +57,10 @@ class RobotBuilder(ABC):
     @abstractmethod
     def build_detection_system(self):
         pass
+    
+    def get_product(self):
+      return self.product
+      pass
 
 
 # Concrete Builder class:  there would be MANY of these
@@ -69,8 +73,7 @@ class AndroidBuilder(RobotBuilder):
 
     # All of the concrete builders have this in common
     # Should it be elevated to the superclass?
-    def get_product(self):
-        return self.product
+   
 
     def build_traversal(self):
         self.product.bipedal = True
@@ -88,12 +91,10 @@ class AutonomousCarBuilder(RobotBuilder):
         self.product = Robot()
 
     def reset(self):
-        self.product = Robot()
-
+      self.product = Robot() 
     # All of the concrete builders have this in common
     # Should it be elevated to the superclass?
-    def get_product(self):
-        return self.product
+  
 
     def build_traversal(self):
         self.product.wheeled = True
@@ -102,7 +103,25 @@ class AutonomousCarBuilder(RobotBuilder):
     def build_detection_system(self):
         self.product.detection_systems.append(Components.infrared)
 
+class FlyingMonkeyRobotBuilder(RobotBuilder):
+    def __init__(self):
+       self.product = Robot()
 
+    def reset(self):
+       self.product = Robot()
+
+    # All of the concrete builders have this in common
+    # Should it be elevated to the superclass?
+    # Fixed elevated to the superclass RobotBuilder
+
+    def build_traversal(self):
+        self.product.flying = True
+        self.product.traversal.append(Components.wings)
+        self.product.traversal.append(Components.two_arms)
+
+    def build_detection_system(self):
+        self.product.detection_systems.append(Components.cameras)
+        self.product.detection_systems.append(Components.infrared)
 #-------------------------------------------------------------------------
 # Remove # in line above to comment out this section when using Director
 
@@ -135,6 +154,11 @@ class Director:
         builder.build_detection_system()
         return builder.get_product()
 
+    def make_flying_monkey_robot(self, builder):
+        builder.build_traversal()
+        builder.build_detection_system()
+        return builder.get_product()        
+
 
 director = Director()
 
@@ -144,4 +168,6 @@ print(director.make_android(builder))
 builder = AutonomousCarBuilder()
 print(director.make_autonomous_car(builder))
 
+builder = FlyingMonkeyRobotBuilder()
+print(director.make_flying_monkey_robot(builder))
 # comment out line below when testing director
